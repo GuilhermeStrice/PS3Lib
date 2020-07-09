@@ -21,10 +21,8 @@
 // ************************************************* //
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PS3Lib
 {
@@ -59,13 +57,19 @@ namespace PS3Lib
         /// <summary>Enter into all functions "Reader".</summary>
         public ArrayReader Read
         {
-            get { return new ArrayReader(buffer); }
+            get 
+            { 
+                return new ArrayReader(buffer); 
+            }
         }
 
         /// <summary>Enter into all functions "Writer".</summary>
         public ArrayWriter Write
         {
-            get { return new ArrayWriter(buffer); }
+            get 
+            { 
+                return new ArrayWriter(buffer); 
+            }
         }
 
         public class ArrayReader

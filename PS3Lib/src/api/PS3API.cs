@@ -52,12 +52,15 @@ namespace PS3Lib
         private void MakeInstanceAPI(SelectAPI API)
         {
             if (API == SelectAPI.TargetManager)
+            {
                 if (APISingleton.TM_API == null)
                     APISingleton.TM_API = new TMAPI();
+            }
             else
+            {
                 if (APISingleton.CC_API == null)
                     APISingleton.CC_API = new CCAPI();
-            // implement PS3MAPI
+            }
         }
 
        /// <summary>init again the connection if you use a Thread or a Timer.</summary>
@@ -113,7 +116,8 @@ namespace PS3Lib
         {
             if (CurrentAPI == SelectAPI.TargetManager)
                 APISingleton.TM_API.DisconnectTarget();
-            else APISingleton.CC_API.DisconnectTarget();
+            else 
+                APISingleton.CC_API.DisconnectTarget();
         }
 
         /// <summary>Attach the current process (current Game) with selected API.</summary>
@@ -209,19 +213,28 @@ namespace PS3Lib
         /// <summary>Access to all TMAPI functions.</summary>
         public TMAPI TMAPI
         {
-            get { return new TMAPI(); }
+            get 
+            { 
+                return new TMAPI(); 
+            }
         }
 
         /// <summary>Access to all CCAPI functions.</summary>
         public CCAPI CCAPI
         {
-            get { return new CCAPI(); }
+            get 
+            { 
+                return new CCAPI(); 
+            }
         }
 
         /// <summary>Access to all MAPI functions.</summary>
         public CCAPI MAPI
         {
-            get { return new CCAPI(); }
+            get 
+            { 
+                return new CCAPI(); 
+            }
         }
     }
 }

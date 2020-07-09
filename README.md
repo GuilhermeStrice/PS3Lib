@@ -1,14 +1,12 @@
 # PS3 Library for .NET
 
 This will allow you to communicate with your PS3 DEX/CEX
-Connection with targets , read/write memory and more...
+Connect with PS3's, read/write memory and more...
 
 # Last changes:
-- Support CCAPI v2.60+.
-- Read/Write memory as 'double'.
-- Read/Write memory as 'float' array.
-- ArrayBuilder constructor overload.
-- Some functions fixes. 
+- Removed System.Windows.Forms as dependecy
+- Natively supports MAPI through CCAPI (still needs fake "CCAPI.dll" but now it must be called "MAPI.dll")
+- Code refractoring
 
 # Functions list :
 
@@ -18,22 +16,16 @@ Connection with targets , read/write memory and more...
 - Function ReadString is now very fast.
 - Extension class support both API's.
 - ArrayBuilder for build arrays easily.
-- IO Removed (Few people used it).
 - Set API to switch when you want.
 - Use both API's with same function names.
-- Dialog CCAPI for ip implemented.
 - Connect & Attach function returns bool.
-- Fixed some bugs TMAPI.
+- Must give MAPI.dll
 
 # MD5 Hash
 
 - v4.5.1: 0B35CC2DF877C881469094FE47D2E825
 
 # Information
-
-- Don't forget to INSTALL the latest version of CCAPI (v2.60 (or higher)) in your PS3 if you want develop applications with CCAPI C#
-	- http://www.frenchmoddingteam.com/shop/application/20-control-console-api-2-60-rte-cex-dex
-
 
 More informations about all PS3Lib functions here :
 

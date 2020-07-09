@@ -21,13 +21,11 @@
 // ************************************************* //
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Xml;
 
 using PS3Lib.NET;
 
@@ -41,12 +39,14 @@ namespace PS3Lib
 
         public TMAPI()
         {
-
         }
    
         public Extension Extension
         {
-            get { return new Extension(SelectAPI.TargetManager); }
+            get 
+            { 
+                return new Extension(SelectAPI.TargetManager); 
+            }
         }
 
         public class SCECMD
@@ -60,12 +60,12 @@ namespace PS3Lib
             /// <summary>Get the target name.</summary>
             public string GetTargetName()
             {
-                if (Parameters.ConsoleName == null || Parameters.ConsoleName == String.Empty)
+                if (Parameters.ConsoleName == null || Parameters.ConsoleName == string.Empty)
                 {
                     PS3TMAPI.InitTargetComms();
                     PS3TMAPI.TargetInfo TargetInfo = new PS3TMAPI.TargetInfo();
                     TargetInfo.Flags = TargetInfoFlag.TargetID;
-                    TargetInfo.Target = TMAPI.Target;
+                    TargetInfo.Target = Target;
                     PS3TMAPI.GetTargetInfo(ref TargetInfo);
                     Parameters.ConsoleName = TargetInfo.Name;
                 }
@@ -75,7 +75,7 @@ namespace PS3Lib
             /// <summary>Get the target status and return the string value.</summary>
             public string GetStatus()
             {
-                if (TMAPI.AssemblyLoaded)
+                if (AssemblyLoaded)
                     return "NotConnected";
                 Parameters.connectStatus = new ConnectStatus();
                 PS3TMAPI.GetConnectStatus(Target, out Parameters.connectStatus, out Parameters.usage);
@@ -104,7 +104,10 @@ namespace PS3Lib
 
         public SCECMD SCE
         {
-            get { return new SCECMD(); }
+            get 
+            { 
+                return new SCECMD(); 
+            }
         }
 
         public class Parameters
@@ -134,12 +137,11 @@ namespace PS3Lib
         /// <summary>Connect the default target and initialize the dll. Possible to put an int as arugment for determine which target to connect.</summary>
         public bool ConnectTarget(int TargetIndex = 0)
         {
-            bool result = false;
-            if(AssemblyLoaded)
+            if (AssemblyLoaded)
                 PS3TMAPI_NET();
             AssemblyLoaded = false;
             Target = TargetIndex;
-            result = PS3TMAPI.SUCCEEDED(PS3TMAPI.InitTargetComms());
+            bool result = PS3TMAPI.SUCCEEDED(PS3TMAPI.InitTargetComms());
             result = PS3TMAPI.SUCCEEDED(PS3TMAPI.Connect(TargetIndex, null));
             return result;
         }
@@ -147,11 +149,10 @@ namespace PS3Lib
         /// <summary>Connect the target by is name.</summary>
         public bool ConnectTarget(string TargetName)
         {
-            bool result = false;
             if (AssemblyLoaded)
                 PS3TMAPI_NET();
             AssemblyLoaded = false;
-            result = PS3TMAPI.SUCCEEDED(PS3TMAPI.InitTargetComms());
+            bool result = PS3TMAPI.SUCCEEDED(PS3TMAPI.InitTargetComms());
             if (result)
             {
                 result = PS3TMAPI.SUCCEEDED(PS3TMAPI.GetTargetFromName(TargetName, out Target));
@@ -183,8 +184,8 @@ namespace PS3Lib
         /// <summary>Attach and continue the current process from the target.</summary>
         public bool AttachProcess()
         {
-            bool isOK = false;
             PS3TMAPI.GetProcessList(Target, out Parameters.processIDs);
+            bool isOK;
             if (Parameters.processIDs.Length > 0)
                 isOK = true;
             else isOK = false;
@@ -260,18 +261,14 @@ namespace PS3Lib
             string replace = hex.Replace("0x", "");
             string Stringz = replace.Insert(replace.Length - 1, "0");
 
-            int Odd = replace.Length;
-            bool Nombre = false;
-            if (Odd % 2 == 0) Nombre = true;
-
             try
             {
                 return Enumerable.Range(0, replace.Length)
                  .Where(x => x % 2 == 0)
-                 .Select(x => Convert.ToByte(Nombre ? replace.Substring(x, 2) : Stringz.Substring(x, 2), 16))
+                 .Select(x => Convert.ToByte(replace.Length % 2 == 0 ? replace.Substring(x, 2) : Stringz.Substring(x, 2), 16))
                  .ToArray();
             }
-            catch { throw new System.ArgumentException("Value not possible.", "Byte Array"); }
+            catch { throw new ArgumentException("Value not possible.", "Byte Array"); }
         }
 
         internal static string ReplaceString(byte[] bytes)
@@ -320,9 +317,7 @@ namespace PS3Lib
                         if (File.Exists(x86))
                             LoadApi = Assembly.LoadFile(x86);
                         else
-                        {
                             PS3API.OnError?.Invoke(ErrorCodes.TMAPI_NOT_FOUND);
-                        }
                     }
                 }
                 return LoadApi;

@@ -92,20 +92,18 @@ namespace PS3Lib
 
         public CCAPI()
         {
-            RegistryKey Key = Registry
-                .CurrentUser
-                .OpenSubKey(@"Software\FrenchModdingTeam\CCAPI\InstallFolder");
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\FrenchModdingTeam\CCAPI\InstallFolder");
 
-            if (Key != null)
+            if (key != null)
             {
-                string Path = Key.GetValue("path") as String;
-                if (!string.IsNullOrEmpty(Path))
+                string path = key.GetValue("path") as string;
+                if (!string.IsNullOrEmpty(path))
                 {
-                    string DllUrl = Path + @"\CCAPI.dll";
-                    if (File.Exists(DllUrl))
+                    string dllPath = Path.Combine(path, "CCAPI.dll");
+                    if (File.Exists(dllPath))
                     {
                         if (libModule == IntPtr.Zero)
-                            libModule = Native.LoadLibrary(DllUrl);
+                            libModule = Native.LoadLibrary(dllPath);
 
                         if (libModule != IntPtr.Zero)
                         {
@@ -151,29 +149,19 @@ namespace PS3Lib
                                 shutdown = (shutdownDelegate)Marshal.GetDelegateForFunctionPointer(GetCCAPIFunctionPtr(CCAPIFunctions.ShutDown), typeof(shutdownDelegate));
                             }
                             else
-                            {
                                 PS3API.OnError?.Invoke(ErrorCodes.CCAPI_LOAD_FAILED);
-                            }
                         }
                         else
-                        {
                             PS3API.OnError?.Invoke(ErrorCodes.CCAPI_LOAD_FAILED);
-                        }
                     }
                     else
-                    {
                         PS3API.OnError?.Invoke(ErrorCodes.CCAPI_NOT_FOUND);
-                    }
                 }
                 else
-                {
                     PS3API.OnError?.Invoke(ErrorCodes.CCAPI_NOT_INSTALLED);
-                }
             }
             else
-            {
                 PS3API.OnError?.Invoke(ErrorCodes.CCAPI_NOT_INSTALLED);
-            }
         }
 
         private TargetInfo pInfo = new TargetInfo();
@@ -181,7 +169,7 @@ namespace PS3Lib
         private IntPtr ReadDataFromUnBufPtr<T>(IntPtr unBuf, ref T storage)
         {
             storage = (T)Marshal.PtrToStructure(unBuf, typeof(T));
-            return new IntPtr(unBuf.ToInt64() + Marshal.SizeOf((T)storage));
+            return new IntPtr(unBuf.ToInt64() + Marshal.SizeOf(storage));
         }
 
         private class System
@@ -215,11 +203,6 @@ namespace PS3Lib
                 Ip;
         }
 
-        public Extension Extension
-        {
-            get { return new Extension(SelectAPI.ControlConsole); }
-        }
-
         private IntPtr GetCCAPIFunctionPtr(CCAPIFunctions Function)
         {
             return CCAPIFunctionsList.ElementAt((int)Function);
@@ -228,8 +211,10 @@ namespace PS3Lib
         private bool IsCCAPILoaded()
         {
             for (int i = 0; i < CCAPIFunctionsList.Count; i++)
+            {
                 if (CCAPIFunctionsList.ElementAt(i) == IntPtr.Zero)
                     return false;
+            }
             return true;
         }
 
@@ -275,13 +260,13 @@ namespace PS3Lib
         /// <summary>Attach the default process (Current Game).</summary>
         public int AttachProcess()
         {
-            int result = -1; System.processID = 0;
-            result = GetProcessList(out System.processIDs);
+            System.processID = 0;
+            int result = GetProcessList(out System.processIDs);
             if (SUCCESS(result) && System.processIDs.Length > 0)
             {
                 for (int i = 0; i < System.processIDs.Length; i++)
                 {
-                    string name = String.Empty;
+                    string name;
                     result = GetProcessName(System.processIDs[i], out name);
                     if (!SUCCESS(result))
                         break;
@@ -302,27 +287,30 @@ namespace PS3Lib
         /// <summary>Attach your desired process.</summary>
         public int AttachProcess(ProcessType procType)
         {
-            int result = -1; System.processID = 0;
-            result = GetProcessList(out System.processIDs);
+            System.processID = 0;
+            int result = GetProcessList(out System.processIDs);
             if (result >= 0 && System.processIDs.Length > 0)
             {
                 for (int i = 0; i < System.processIDs.Length; i++)
                 {
-                    string name = String.Empty;
+                    string name;
                     result = GetProcessName(System.processIDs[i], out name);
                     if (result < 0)
                         break;
                     if (procType == ProcessType.VSH && name.Contains("vsh"))
                     {
-                        System.processID = System.processIDs[i]; break;
+                        System.processID = System.processIDs[i]; 
+                        break;
                     }
                     else if (procType == ProcessType.SYS_AGENT && name.Contains("agent"))
                     {
-                        System.processID = System.processIDs[i]; break;
+                        System.processID = System.processIDs[i]; 
+                        break;
                     }
                     else if (procType == ProcessType.CURRENTGAME && !name.Contains("flash"))
                     {
-                        System.processID = System.processIDs[i]; break;
+                        System.processID = System.processIDs[i]; 
+                        break;
                     }
                 }
                 if (System.processID == 0)
@@ -335,9 +323,8 @@ namespace PS3Lib
         /// <summary>Attach your desired process.</summary>
         public int AttachProcess(uint process)
         {
-            int result = -1;
             uint[] procs = new uint[64];
-            result = GetProcessList(out procs);
+            int result = GetProcessList(out procs);
             if (SUCCESS(result))
             {
                 for (int i = 0; i < procs.Length; i++)
@@ -366,7 +353,7 @@ namespace PS3Lib
             {
                 IntPtr unBuf = ptr;
                 for (uint i = 0; i < numOfProcs; i++)
-                    unBuf = ReadDataFromUnBufPtr<uint>(unBuf, ref processIds[i]);
+                    unBuf = ReadDataFromUnBufPtr(unBuf, ref processIds[i]);
             }
             Marshal.FreeHGlobal(ptr);
             return result;
@@ -375,9 +362,9 @@ namespace PS3Lib
         /// <summary>Get the process name of your choice.</summary>
         public int GetProcessName(uint processId, out string name)
         {
-            IntPtr ptr = Marshal.AllocHGlobal((int)(0x211)); int result = -1;
-            result = getProcessName(processId, ptr);
-            name = String.Empty;
+            IntPtr ptr = Marshal.AllocHGlobal(0x211); 
+            int result = getProcessName(processId, ptr);
+            name = string.Empty;
             if (SUCCESS(result))
                 name = Marshal.PtrToStringAnsi(ptr);
             Marshal.FreeHGlobal(ptr);
@@ -393,7 +380,7 @@ namespace PS3Lib
         /// <summary>Set memory to offset (uint).</summary>
         public int SetMemory(uint offset, byte[] buffer)
         {
-            return setProcessMemory(System.processID, (ulong)offset, (uint)buffer.Length, buffer);
+            return setProcessMemory(System.processID, offset, (uint)buffer.Length, buffer);
         }
 
         /// <summary>Set memory to offset (ulong).</summary>
@@ -414,7 +401,7 @@ namespace PS3Lib
         /// <summary>Get memory from offset (uint).</summary>
         public int GetMemory(uint offset, byte[] buffer)
         {
-            return getProcessMemory(System.processID, (ulong)offset, (uint)buffer.Length, buffer);
+            return getProcessMemory(System.processID, offset, (uint)buffer.Length, buffer);
         }
 
         /// <summary>Get memory from offset (ulong).</summary>
@@ -471,9 +458,10 @@ namespace PS3Lib
 
         private int GetTargetInfo()
         {
-            int result = -1; int[] sysTemp = new int[2];
-            int fw = 0, ccapi = 0, consoleType = 0; ulong sysTable = 0;
-            result = getFirmwareInfo(ref fw, ref ccapi, ref consoleType);
+            int[] sysTemp = new int[2];
+            int fw = 0, ccapi = 0, consoleType = 0; 
+            ulong sysTable = 0;
+            int result = getFirmwareInfo(ref fw, ref ccapi, ref consoleType);
             if (result >= 0)
             {
                 result = getTemperature(ref sysTemp[0], ref sysTemp[1]);
@@ -488,9 +476,10 @@ namespace PS3Lib
         public int GetTargetInfo(out TargetInfo Info)
         {
             Info = new TargetInfo();
-            int result = -1; int[] sysTemp = new int[2];
-            int fw = 0, ccapi = 0, consoleType = 0; ulong sysTable = 0;
-            result = getFirmwareInfo(ref fw, ref ccapi, ref consoleType);
+            int[] sysTemp = new int[2];
+            int fw = 0, ccapi = 0, consoleType = 0; 
+            ulong sysTable = 0;
+            int result = getFirmwareInfo(ref fw, ref ccapi, ref consoleType);
             if (result >= 0)
             {
                 result = getTemperature(ref sysTemp[0], ref sysTemp[1]);
@@ -562,7 +551,7 @@ namespace PS3Lib
                 PS3API.OnError?.Invoke(ErrorCodes.CID_NULL);
                 return -1;
             }
-            string newCID = String.Empty;
+            string newCID = string.Empty;
             if (consoleID.Length >= 32)
                 newCID = consoleID.Substring(0, 32);
             return SetConsoleID(StringToByteArray(newCID));
@@ -607,9 +596,9 @@ namespace PS3Lib
         /// <summary>Set a console ID when the console is running. (string)</summary>
         public int SetBootConsoleID(string consoleID, IdType Type = IdType.IDPS)
         {
-            string newCID = String.Empty;
-            if (consoleID.Length >= 32)
-                newCID = consoleID.Substring(0, 32);
+            //string newCID;
+            //if (consoleID.Length >= 32)
+            //    newCID = consoleID.Substring(0, 32);
             return SetBootConsoleID(StringToByteArray(consoleID), Type);
         }
 
@@ -636,8 +625,8 @@ namespace PS3Lib
         {
             List<ConsoleInfo> data = new List<ConsoleInfo>();
             int targetCount = getNumberOfConsoles();
-            IntPtr name = Marshal.AllocHGlobal((int)(512)),
-                   ip = Marshal.AllocHGlobal((int)(512));
+            IntPtr name = Marshal.AllocHGlobal(512),
+                   ip = Marshal.AllocHGlobal(512);
             for (int i = 0; i < targetCount; i++)
             {
                 ConsoleInfo Info = new ConsoleInfo();
