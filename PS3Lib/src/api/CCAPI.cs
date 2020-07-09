@@ -24,24 +24,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
 using Microsoft.Win32;
-using System.Security.Cryptography;
 
 namespace PS3Lib
 {
     public class CCAPI
     {
-        [DllImport("kernel32.dll")]
-        static extern IntPtr LoadLibrary(string dllName);
-
-        [DllImport("kernel32.dll")]
-        static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
-
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int connectConsoleDelegate(string targetIP);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -101,28 +90,6 @@ namespace PS3Lib
         private IntPtr libModule = IntPtr.Zero;
         private List<IntPtr> CCAPIFunctionsList = new List<IntPtr>();
 
-        private enum CCAPIFunctions
-        {
-            ConnectConsole,
-            DisconnectConsole,
-            GetConnectionStatus,
-            GetConsoleInfo,
-            GetDllVersion,
-            GetFirmwareInfo,
-            GetNumberOfConsoles,
-            GetProcessList,
-            GetMemory,
-            GetProcessName,
-            GetTemperature,
-            VshNotify,
-            RingBuzzer,
-            SetBootConsoleIds,
-            SetConsoleIds,
-            SetConsoleLed,
-            SetMemory,
-            ShutDown
-        }
-
         public CCAPI()
         {
             RegistryKey Key = Registry
@@ -138,29 +105,29 @@ namespace PS3Lib
                     if (File.Exists(DllUrl))
                     {
                         if (libModule == IntPtr.Zero)
-                            libModule = LoadLibrary(DllUrl);
+                            libModule = Native.LoadLibrary(DllUrl);
 
                         if (libModule != IntPtr.Zero)
                         {
                             CCAPIFunctionsList.Clear();
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIConnectConsole"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIDisconnectConsole"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIGetConnectionStatus"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIGetConsoleInfo"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIGetDllVersion"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIGetFirmwareInfo"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIGetNumberOfConsoles"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIGetProcessList"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIGetMemory"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIGetProcessName"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIGetTemperature"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIVshNotify"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIRingBuzzer"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPISetBootConsoleIds"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPISetConsoleIds"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPISetConsoleLed"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPISetMemory"));
-                            CCAPIFunctionsList.Add(GetProcAddress(libModule, "CCAPIShutdown"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIConnectConsole"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIDisconnectConsole"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIGetConnectionStatus"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIGetConsoleInfo"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIGetDllVersion"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIGetFirmwareInfo"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIGetNumberOfConsoles"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIGetProcessList"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIGetMemory"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIGetProcessName"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIGetTemperature"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIVshNotify"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIRingBuzzer"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPISetBootConsoleIds"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPISetConsoleIds"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPISetConsoleLed"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPISetMemory"));
+                            CCAPIFunctionsList.Add(Native.GetProcAddress(libModule, "CCAPIShutdown"));
 
                             if (IsCCAPILoaded())
                             {
@@ -185,100 +152,28 @@ namespace PS3Lib
                             }
                             else
                             {
-                                MessageBox.Show("Impossible to load CCAPI 2.60+", "This CCAPI.dll is not compatible", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                PS3API.OnError?.Invoke(ErrorCodes.CCAPI_LOAD_FAILED);
                             }
                         }
                         else
                         {
-                            MessageBox.Show("Impossible to load CCAPI 2.60+", "CCAPI.dll cannot be loaded", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            PS3API.OnError?.Invoke(ErrorCodes.CCAPI_LOAD_FAILED);
                         }
                     }
                     else
                     {
-                        MessageBox.Show("You need to install CCAPI 2.60+ to use this library.", "CCAPI.dll not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        PS3API.OnError?.Invoke(ErrorCodes.CCAPI_NOT_FOUND);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Invalid CCAPI folder, please re-install it.", "CCAPI not installed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    PS3API.OnError?.Invoke(ErrorCodes.CCAPI_NOT_INSTALLED);
                 }
             }
             else
             {
-                MessageBox.Show("You need to install CCAPI 2.60+ to use this library.", "CCAPI not installed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PS3API.OnError?.Invoke(ErrorCodes.CCAPI_NOT_INSTALLED);
             }
-        }
-
-        public enum IdType
-        {
-            IDPS,
-            PSID
-        }
-
-        public enum NotifyIcon
-        {
-            INFO,
-            CAUTION,
-            FRIEND,
-            SLIDER,
-            WRONGWAY,
-            DIALOG,
-            DIALOGSHADOW,
-            TEXT,
-            POINTER,
-            GRAB,
-            HAND,
-            PEN,
-            FINGER,
-            ARROW,
-            ARROWRIGHT,
-            PROGRESS,
-            TROPHY1,
-            TROPHY2,
-            TROPHY3,
-            TROPHY4
-        }
-
-        public enum ConsoleType
-        {
-            CEX = 1,
-            DEX = 2,
-            TOOL = 3
-        }
-
-        public enum ProcessType
-        {
-            VSH,
-            SYS_AGENT,
-            CURRENTGAME
-        }
-
-        public enum RebootFlags
-        {
-            ShutDown = 1,
-            SoftReboot = 2,
-            HardReboot = 3
-        }
-
-        public enum BuzzerMode
-        {
-            Continuous,
-            Single,
-            Double,
-            Triple
-        }
-
-        public enum LedColor
-        {
-            Green = 1,
-            Red = 2
-        }
-
-        public enum LedMode
-        {
-            Off,
-            On,
-            Blink
         }
 
         private TargetInfo pInfo = new TargetInfo();
@@ -354,12 +249,6 @@ namespace PS3Lib
             if (Void == 0)
                 return true;
             else return false;
-        }
-
-        /// <summary>Connect your console by console list.</summary>
-        public bool ConnectTarget()
-        {
-            return new PS3API.ConsoleList(new PS3API(SelectAPI.ControlConsole)).Show();
         }
 
         /// <summary>Connect your console by ip address.</summary>
@@ -670,7 +559,7 @@ namespace PS3Lib
         {
             if (string.IsNullOrEmpty(consoleID))
             {
-                MessageBox.Show("Cannot send an empty value", "Empty or null console id", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PS3API.OnError?.Invoke(ErrorCodes.CID_NULL);
                 return -1;
             }
             string newCID = String.Empty;
@@ -684,7 +573,7 @@ namespace PS3Lib
         {
             if (consoleID.Length <= 0)
             {
-                MessageBox.Show("Cannot send an empty value", "Empty or null console id", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PS3API.OnError?.Invoke(ErrorCodes.CID_NULL);
                 return -1;
             }
             return setConsoleIds((int)IdType.IDPS, consoleID);
@@ -695,7 +584,7 @@ namespace PS3Lib
         {
             if (string.IsNullOrEmpty(PSID))
             {
-                MessageBox.Show("Cannot send an empty value", "Empty or null psid", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PS3API.OnError?.Invoke(ErrorCodes.PSID_NULL);
                 return -1;
             }
             string PS_ID = String.Empty;
@@ -709,7 +598,7 @@ namespace PS3Lib
         {
             if (consoleID.Length <= 0)
             {
-                MessageBox.Show("Cannot send an empty value", "Empty or null psid", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PS3API.OnError?.Invoke(ErrorCodes.PSID_NULL);
                 return -1;
             }
             return setConsoleIds((int)IdType.PSID, consoleID);
@@ -764,36 +653,22 @@ namespace PS3Lib
 
         internal static byte[] StringToByteArray(string hex)
         {
-            try
-            {
-                string replace = hex.Replace("0x", "");
-                string Stringz = replace.Insert(replace.Length - 1, "0");
+            string replace = hex.Replace("0x", "");
+            string Stringz = replace.Insert(replace.Length - 1, "0");
 
-                int Odd = replace.Length;
-                bool Nombre;
-                if (Odd % 2 == 0)
-                    Nombre = true;
-                else
-                    Nombre = false;
-                if (Nombre == true)
-                {
-                    return Enumerable.Range(0, replace.Length)
-                    .Where(x => x % 2 == 0)
-                    .Select(x => Convert.ToByte(replace.Substring(x, 2), 16))
-                    .ToArray();
-                }
-                else
-                {
-                    return Enumerable.Range(0, replace.Length)
-                    .Where(x => x % 2 == 0)
-                    .Select(x => Convert.ToByte(Stringz.Substring(x, 2), 16))
-                    .ToArray();
-                }
-            }
-            catch
+            if (replace.Length % 2 == 0)
             {
-                MessageBox.Show("Incorrect value (empty)", "StringToByteArray Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return new byte[1];
+                return Enumerable.Range(0, replace.Length)
+                .Where(x => x % 2 == 0)
+                .Select(x => Convert.ToByte(replace.Substring(x, 2), 16))
+                .ToArray();
+            }
+            else
+            {
+                return Enumerable.Range(0, replace.Length)
+                .Where(x => x % 2 == 0)
+                .Select(x => Convert.ToByte(Stringz.Substring(x, 2), 16))
+                .ToArray();
             }
         }
     }

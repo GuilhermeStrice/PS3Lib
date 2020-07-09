@@ -27,7 +27,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Windows.Forms;
 using System.Xml;
 
 using PS3Lib.NET;
@@ -38,7 +37,7 @@ namespace PS3Lib
     {
         public static int Target = 0xFF;
         public static bool AssemblyLoaded = true;
-        public static PS3TMAPI.ResetParameter resetParameter;
+        public static ResetParameter resetParameter;
 
         public TMAPI()
         {
@@ -65,7 +64,7 @@ namespace PS3Lib
                 {
                     PS3TMAPI.InitTargetComms();
                     PS3TMAPI.TargetInfo TargetInfo = new PS3TMAPI.TargetInfo();
-                    TargetInfo.Flags = PS3TMAPI.TargetInfoFlag.TargetID;
+                    TargetInfo.Flags = TargetInfoFlag.TargetID;
                     TargetInfo.Target = TMAPI.Target;
                     PS3TMAPI.GetTargetInfo(ref TargetInfo);
                     Parameters.ConsoleName = TargetInfo.Name;
@@ -78,7 +77,7 @@ namespace PS3Lib
             {
                 if (TMAPI.AssemblyLoaded)
                     return "NotConnected";
-                Parameters.connectStatus = new PS3TMAPI.ConnectStatus();
+                Parameters.connectStatus = new ConnectStatus();
                 PS3TMAPI.GetConnectStatus(Target, out Parameters.connectStatus, out Parameters.usage);
                 Parameters.Status = Parameters.connectStatus.ToString();
                 return Parameters.Status;
@@ -97,7 +96,7 @@ namespace PS3Lib
             }
 
             /// <summary>Get some details from your target.</summary>
-            public PS3TMAPI.ConnectStatus DetailStatus()
+            public ConnectStatus DetailStatus()
             {
                 return Parameters.connectStatus;
             }
@@ -123,17 +122,8 @@ namespace PS3Lib
                 processIDs;
             public static byte[]
                 Retour;
-            public static PS3TMAPI.ConnectStatus
+            public static ConnectStatus
                 connectStatus;
-        }
-
-        /// <summary>Enum of flag reset.</summary>
-        public enum ResetTarget
-        {      
-            Hard,
-            Quick,
-            ResetEx,
-            Soft
         }
 
         public void InitComms()
@@ -202,7 +192,7 @@ namespace PS3Lib
             {
                 ulong uProcess = Parameters.processIDs[0];
                 Parameters.ProcessID = Convert.ToUInt32(uProcess);
-                PS3TMAPI.ProcessAttach(Target, PS3TMAPI.UnitType.PPU, Parameters.ProcessID);
+                PS3TMAPI.ProcessAttach(Target, UnitType.PPU, Parameters.ProcessID);
                 PS3TMAPI.ProcessContinue(Target, Parameters.ProcessID);
                 Parameters.info = "The Process 0x" + Parameters.ProcessID.ToString("X8") + " Has Been Attached !";
             }
@@ -212,7 +202,7 @@ namespace PS3Lib
         /// <summary>Set memory to the target (byte[]).</summary>
         public void SetMemory(uint Address, byte[] Bytes)
         {
-            PS3TMAPI.ProcessSetMemory(Target, PS3TMAPI.UnitType.PPU, Parameters.ProcessID, 0, Address, Bytes);
+            PS3TMAPI.ProcessSetMemory(Target, UnitType.PPU, Parameters.ProcessID, 0, Address, Bytes);
         }
 
         /// <summary>Set memory to the address (byte[]).</summary>
@@ -220,7 +210,7 @@ namespace PS3Lib
         {
             byte[] b = BitConverter.GetBytes(value);
             Array.Reverse(b);
-            PS3TMAPI.ProcessSetMemory(Target, PS3TMAPI.UnitType.PPU, Parameters.ProcessID, 0, Address, b);
+            PS3TMAPI.ProcessSetMemory(Target, UnitType.PPU, Parameters.ProcessID, 0, Address, b);
         }
 
         /// <summary>Set memory with value as string hexadecimal to the address (string).</summary>
@@ -229,20 +219,20 @@ namespace PS3Lib
             byte[] Entry = StringToByteArray(hexadecimal);
             if (Type == EndianType.LittleEndian)
                 Array.Reverse(Entry);
-            PS3TMAPI.ProcessSetMemory(Target, PS3TMAPI.UnitType.PPU, Parameters.ProcessID, 0, Address, Entry);
+            PS3TMAPI.ProcessSetMemory(Target, UnitType.PPU, Parameters.ProcessID, 0, Address, Entry);
         }
 
         /// <summary>Get memory from the address.</summary>
         public void GetMemory(uint Address, byte[] Bytes)
         {
-            PS3TMAPI.ProcessGetMemory(Target, PS3TMAPI.UnitType.PPU, Parameters.ProcessID, 0, Address, ref Bytes);
+            PS3TMAPI.ProcessGetMemory(Target, UnitType.PPU, Parameters.ProcessID, 0, Address, ref Bytes);
         }
 
         /// <summary>Get a bytes array with the length input.</summary>
         public byte[] GetBytes(uint Address, uint lengthByte)
         {
             byte[] Longueur = new byte[lengthByte];
-            PS3TMAPI.ProcessGetMemory(Target, PS3TMAPI.UnitType.PPU, Parameters.ProcessID, 0, Address, ref Longueur);
+            PS3TMAPI.ProcessGetMemory(Target, UnitType.PPU, Parameters.ProcessID, 0, Address, ref Longueur);
             return Longueur;
         }
 
@@ -250,7 +240,7 @@ namespace PS3Lib
         public string GetString(uint Address, uint lengthString)
         {
             byte[] Longueur = new byte[lengthString];
-            PS3TMAPI.ProcessGetMemory(Target, PS3TMAPI.UnitType.PPU, Parameters.ProcessID, 0, Address, ref Longueur);
+            PS3TMAPI.ProcessGetMemory(Target, UnitType.PPU, Parameters.ProcessID, 0, Address, ref Longueur);
             string StringResult = Hex2Ascii(ReplaceString(Longueur));
             return StringResult;
         }
@@ -298,13 +288,13 @@ namespace PS3Lib
         public void ResetToXMB(ResetTarget flag)
         {
             if (flag == ResetTarget.Hard)
-                resetParameter = PS3TMAPI.ResetParameter.Hard;
+                resetParameter = ResetParameter.Hard;
             else if (flag == ResetTarget.Quick)
-                resetParameter = PS3TMAPI.ResetParameter.Quick;
+                resetParameter = ResetParameter.Quick;
             else if (flag == ResetTarget.ResetEx)
-                resetParameter = PS3TMAPI.ResetParameter.ResetEx;
+                resetParameter = ResetParameter.ResetEx;
             else if (flag == ResetTarget.Soft)
-                resetParameter = PS3TMAPI.ResetParameter.Soft;
+                resetParameter = ResetParameter.Soft;
             PS3TMAPI.Reset(Target, resetParameter);
         }
 
@@ -318,20 +308,20 @@ namespace PS3Lib
                 var x = string.Format(@"C:\Program Files\SN Systems\PS3\bin\ps3tmapi_net.dll", filename);
                 var x64 = string.Format(@"C:\Program Files (x64)\SN Systems\PS3\bin\ps3tmapi_net.dll", filename);
                 var x86 = string.Format(@"C:\Program Files (x86)\SN Systems\PS3\bin\ps3tmapi_net.dll", filename);
-                if (System.IO.File.Exists(x))
+                if (File.Exists(x))
                     LoadApi = Assembly.LoadFile(x);
                 else
                 {
-                    if (System.IO.File.Exists(x64))
+                    if (File.Exists(x64))
                         LoadApi = Assembly.LoadFile(x64);
 
                     else
                     {
-                        if (System.IO.File.Exists(x86))
+                        if (File.Exists(x86))
                             LoadApi = Assembly.LoadFile(x86);
                         else
                         {
-                            MessageBox.Show("Target Manager API cannot be founded to:\r\n\r\n" + x86, "Error with PS3 API!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            PS3API.OnError?.Invoke(ErrorCodes.TMAPI_NOT_FOUND);
                         }
                     }
                 }
