@@ -79,8 +79,7 @@ namespace PS3Lib
 
     public enum BuzzerMode
     {
-        Continuous,
-        Single,
+        Single = 1,
         Double,
         Triple
     }
@@ -88,7 +87,8 @@ namespace PS3Lib
     public enum LedColor
     {
         Green = 1,
-        Red = 2
+        Red = 2,
+        Yellow = 3,
     }
 
     public enum LedMode

@@ -453,6 +453,8 @@ namespace PS3Lib
         /// <summary>Change leds for your console.</summary>
         public int SetConsoleLed(LedColor color, LedMode mode)
         {
+            if (color == LedColor.Yellow)
+                return -1;
             return setConsoleLed((int)color, (int)mode);
         }
 

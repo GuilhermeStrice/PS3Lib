@@ -24,10 +24,6 @@ namespace PS3Lib
 
         public MAPI()
         {
-            Core = new CORE_CMD();
-            Server = new SERVER_CMD();
-            PS3 = new PS3_CMD();
-            Process = new PROCESS_CMD();
         }
 
         #region PS3MAPI_CLient
@@ -49,6 +45,7 @@ namespace PS3Lib
         {
             get { return PS3MAPI_Client_Server.IsConnected; }
         }
+
         /// <summary>
         /// Indicates if PS3MAPI is attached
         /// </summary>
@@ -209,13 +206,7 @@ namespace PS3Lib
                     throw new Exception(ex.Message, ex);
                 }
             }
-            public enum PowerFlags
-            {
-                ShutDown,
-                QuickReboot,
-                SoftReboot,
-                HardReboot
-            }
+            
             /// <summary>Shutdown Or Reboot PS3.</summary>
             /// <param name="flag">Shutdown, QuickReboot, SoftReboot, HardReboot</param>
             public void Power(PowerFlags flag)
@@ -245,12 +236,7 @@ namespace PS3Lib
                     throw new Exception(ex.Message, ex);
                 }
             }
-            public enum BuzzerMode
-            {
-                Single,
-                Double,
-                Triple
-            }
+            
             /// <summary>Ring PS3 Buzzer.</summary>
             /// <param name="mode">Simple, Double, Continuous</param>
             public void RingBuzzer(BuzzerMode mode)
@@ -266,19 +252,7 @@ namespace PS3Lib
                     throw new Exception(ex.Message, ex);
                 }
             }
-            public enum LedColor
-            {
-                Red = 0,
-                Green = 1,
-                Yellow = 2
-            }
-            public enum LedMode
-            {
-                Off = 0,
-                On = 1,
-                BlinkFast = 2,
-                BlinkSlow = 3
-            }
+
             /// <summary>PS3 Led.</summary>
             /// <param name="color">Red, Green, Yellow</param>
             /// <param name="mode">Off, On, BlinkFast, BlinkSlow</param>
@@ -286,7 +260,12 @@ namespace PS3Lib
             {
                 try
                 {
-                    PS3MAPI_Client_Server.PS3_Led(Convert.ToInt32(color), Convert.ToInt32(mode));
+                    if (color == LedColor.Green)
+                        PS3MAPI_Client_Server.PS3_Led(1, (int)mode);
+                    else if (color == LedColor.Red)
+                        PS3MAPI_Client_Server.PS3_Led(0, (int)mode);
+                    else if (color == LedColor.Yellow)
+                        PS3MAPI_Client_Server.PS3_Led(2, (int)mode);
                 }
                 catch (Exception ex)
                 {
@@ -334,14 +313,7 @@ namespace PS3Lib
                     throw new Exception(ex.Message, ex);
                 }
             }
-            public enum Syscall8Mode
-            {
-                Enabled = 0,
-                Only_CobraMambaAndPS3MAPI_Enabled = 1,
-                Only_PS3MAPI_Enabled = 2,
-                FakeDisabled = 3,
-                Disabled = 4
-            }
+            
             /// <summary>Partial Disable PS3 Syscall 8.</summary>
             /// <param name="mode">Enabled, Only Cobra and PS3M_API features enabled, Only PS3M_API features enabled, Fake Disable</param>
             public void PartialDisableSyscall8(Syscall8Mode mode)
@@ -626,18 +598,6 @@ namespace PS3Lib
             static internal Socket data_sock;
             static internal IPEndPoint main_ipEndPoint;
             static internal IPEndPoint data_ipEndPoint;
-            internal enum PS3MAPI_ResponseCode
-            {
-                DataConnectionAlreadyOpen = 125,
-                MemoryStatusOK = 150,
-                CommandOK = 200,
-                RequestSuccessful = 226,
-                EnteringPassiveMode = 227,
-                PS3MAPIConnected = 220,
-                PS3MAPIConnectedOK = 230,
-                MemoryActionCompleted = 250,
-                MemoryActionPended = 350
-            }
 
             #endregion Internal Members
 
