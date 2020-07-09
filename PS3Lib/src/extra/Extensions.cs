@@ -21,7 +21,6 @@
 // ************************************************* //
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -33,12 +32,6 @@ namespace PS3Lib
         public Extension(SelectAPI API)
         {
             CurrentAPI = API;
-            if (API == SelectAPI.TargetManager)
-                if (Common.TmApi == null)
-                    Common.TmApi = new TMAPI();
-            if (API == SelectAPI.ControlConsole)
-                if (Common.CcApi == null)
-                    Common.CcApi = new CCAPI();
         }
 
         /// <summary>Read a signed byte.</summary>
@@ -291,34 +284,33 @@ namespace PS3Lib
         private void SetMem(uint Address, byte[] buffer, SelectAPI API)
         {
             if (API == SelectAPI.ControlConsole)
-                Common.CcApi.SetMemory(Address, buffer);
+                APISingleton.CC_API.SetMemory(Address, buffer);
             else if (API == SelectAPI.TargetManager)
-                Common.TmApi.SetMemory(Address, buffer);
+                APISingleton.TM_API.SetMemory(Address, buffer);
+            else if (API == SelectAPI.ManagerAPI)
+                APISingleton.M_API.Process.Memory.Set(APISingleton.M_API.Process.Process_Pid, Address, buffer);
         }
 
         private void GetMem(uint offset, byte[] buffer, SelectAPI API)
         {
             if (API == SelectAPI.ControlConsole)
-                Common.CcApi.GetMemory(offset, buffer);
+                APISingleton.CC_API.GetMemory(offset, buffer);
             else if (API == SelectAPI.TargetManager)
-                Common.TmApi.GetMemory(offset, buffer);
+                APISingleton.TM_API.GetMemory(offset, buffer);
+            else if (API == SelectAPI.ManagerAPI)
+                APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
         }
 
         private byte[] GetBytes(uint offset, uint length, SelectAPI API)
         {
             byte[] buffer = new byte[length];
             if (API == SelectAPI.ControlConsole)
-                buffer = Common.CcApi.GetBytes(offset, length);
+                buffer = APISingleton.CC_API.GetBytes(offset, length);
             else if (API == SelectAPI.TargetManager)
-                buffer = Common.TmApi.GetBytes(offset, length);
+                buffer = APISingleton.TM_API.GetBytes(offset, length);
+            else if (API == SelectAPI.ManagerAPI)
+                APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
             return buffer;
         }
-
-        private class Common
-        {
-            public static CCAPI CcApi;
-            public static TMAPI TmApi;
-        }
-
     }
 }

@@ -32,6 +32,7 @@ namespace PS3Lib
     {
         public static CCAPI CC_API;
         public static TMAPI TM_API;
+        public static MAPI M_API;
     }
 
     public class PS3API
@@ -40,6 +41,20 @@ namespace PS3Lib
         public static string TargetIp { get; private set; }
 
         public static OnError OnError;
+
+        internal uint mapi_processId_internal = 0;
+
+        public uint MAPIProcessID
+        {
+            get
+            {
+                return mapi_processId_internal;
+            }
+            set
+            {
+                mapi_processId_internal = value;
+            }
+        }
 
         internal SelectAPI currentAPI_internal;
 
@@ -65,10 +80,15 @@ namespace PS3Lib
                 if (APISingleton.TM_API == null)
                     APISingleton.TM_API = new TMAPI();
             }
-            else
+            else if (API == SelectAPI.ControlConsole)
             {
                 if (APISingleton.CC_API == null)
                     APISingleton.CC_API = new CCAPI();
+            }
+            else
+            {
+                if (APISingleton.M_API == null)
+                    APISingleton.M_API = new MAPI();
             }
         }
 
@@ -94,7 +114,7 @@ namespace PS3Lib
 
             if (CurrentAPI == SelectAPI.TargetManager)
                 return APISingleton.TM_API.ConnectTarget(target);
-            else
+            else if (CurrentAPI == SelectAPI.ControlConsole)
             {
                 var consoleList = GetConsoleList();
                 if (ConnectTarget(consoleList[target].Ip))
@@ -103,6 +123,8 @@ namespace PS3Lib
                     return true;
                 }
             }
+            else
+                OnError?.Invoke(ErrorCodes.NOT_SUPPORTED);
 
             return false;
         }
@@ -110,14 +132,24 @@ namespace PS3Lib
         /// <summary>Connect your console with CCAPI.</summary>
         public bool ConnectTarget(string ip)
         {
-            // We'll check again if the instance has been done.
-            MakeInstanceAPI(CurrentAPI);
-            if (APISingleton.CC_API.SUCCESS(APISingleton.CC_API.ConnectTarget(ip)))
+            if (CurrentAPI == SelectAPI.ControlConsole)
             {
-                TargetIp = ip;
-                return true;
+                if (APISingleton.CC_API.SUCCESS(APISingleton.CC_API.ConnectTarget(ip)))
+                {
+                    TargetIp = ip;
+                    return true;
+                }
             }
-            else return false;
+            else if (CurrentAPI == SelectAPI.ManagerAPI)
+            {
+                if (APISingleton.M_API.ConnectTarget(ip))
+                {
+                    TargetIp = ip;
+                    return true;
+                }
+            }
+            
+            return false;
         }
 
         /// <summary>Disconnect Target with selected API.</summary>
@@ -125,27 +157,28 @@ namespace PS3Lib
         {
             if (CurrentAPI == SelectAPI.TargetManager)
                 APISingleton.TM_API.DisconnectTarget();
-            else 
+            else if (CurrentAPI == SelectAPI.ControlConsole)
                 APISingleton.CC_API.DisconnectTarget();
+            else
+                APISingleton.M_API.DisconnectTarget();
         }
 
         /// <summary>Attach the current process (current Game) with selected API.</summary>
         public bool AttachProcess()
         {
-            // We'll check again if the instance has been done.
-            MakeInstanceAPI(CurrentAPI);
-
             if (CurrentAPI == SelectAPI.TargetManager)
                 return APISingleton.TM_API.AttachProcess();
-            else
+            else if (CurrentAPI == SelectAPI.ControlConsole)
                 return APISingleton.CC_API.SUCCESS(APISingleton.CC_API.AttachProcess());
+            else
+                return APISingleton.M_API.AttachProcess(MAPIProcessID);
         }
 
         public string GetConsoleName()
         {
             if (CurrentAPI == SelectAPI.TargetManager)
                 return APISingleton.TM_API.SCE.GetTargetName();
-            else
+            else if (CurrentAPI == SelectAPI.ControlConsole)
             {
                 if (TargetName != string.Empty)
                     return TargetName;
@@ -162,6 +195,8 @@ namespace PS3Lib
                 }
                 return TargetIp;
             }
+
+            return null;
         }
 
         /// <summary>Set memory to offset with selected API.</summary>
@@ -169,8 +204,10 @@ namespace PS3Lib
         {
             if (CurrentAPI == SelectAPI.TargetManager)
                 APISingleton.TM_API.SetMemory(offset, buffer);
-            else
+            else if (CurrentAPI == SelectAPI.ControlConsole)
                 APISingleton.CC_API.SetMemory(offset, buffer);
+            else
+                APISingleton.M_API.Process.Memory.Set(APISingleton.M_API.Process.Process_Pid, offset, buffer);
         }
 
         /// <summary>Get memory from offset using the Selected API.</summary>
@@ -178,8 +215,10 @@ namespace PS3Lib
         {
             if (CurrentAPI == SelectAPI.TargetManager)
                 APISingleton.TM_API.GetMemory(offset, buffer);
-            else
+            else if (CurrentAPI == SelectAPI.ControlConsole)
                 APISingleton.CC_API.GetMemory(offset, buffer);
+            else
+                APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
         }
 
         /// <summary>Get memory from offset with a length using the Selected API.</summary>
@@ -188,8 +227,10 @@ namespace PS3Lib
             byte[] buffer = new byte[length];
             if (CurrentAPI == SelectAPI.TargetManager)
                 APISingleton.TM_API.GetMemory(offset, buffer);
-            else
+            else if (CurrentAPI == SelectAPI.ControlConsole)
                 APISingleton.CC_API.GetMemory(offset, buffer);
+            else
+                APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
             return buffer;
         }
 
@@ -216,33 +257,6 @@ namespace PS3Lib
             get 
             { 
                 return new Extension(CurrentAPI); 
-            }
-        }
-
-        /// <summary>Access to all TMAPI functions.</summary>
-        public TMAPI TMAPI
-        {
-            get 
-            { 
-                return new TMAPI(); 
-            }
-        }
-
-        /// <summary>Access to all CCAPI functions.</summary>
-        public CCAPI CCAPI
-        {
-            get 
-            { 
-                return new CCAPI(); 
-            }
-        }
-
-        /// <summary>Access to all MAPI functions.</summary>
-        public CCAPI MAPI
-        {
-            get 
-            { 
-                return new CCAPI(); 
             }
         }
     }

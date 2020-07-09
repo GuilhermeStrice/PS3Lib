@@ -16,6 +16,8 @@ namespace PS3Lib
 
         CID_NULL,
         PSID_NULL,
+
+        NOT_SUPPORTED,
     }
 
     public enum SelectAPI
