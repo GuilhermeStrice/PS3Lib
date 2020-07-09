@@ -41,12 +41,21 @@ namespace PS3Lib
 
         public static OnError OnError;
 
-        private SelectAPI CurrentAPI { get; set; }
+        internal SelectAPI currentAPI_internal;
+
+        public SelectAPI CurrentAPI
+        { 
+            get { return currentAPI_internal; }
+            set
+            {
+                currentAPI_internal = value;
+                MakeInstanceAPI(currentAPI_internal);
+            }
+        }
 
         public PS3API(SelectAPI API = SelectAPI.TargetManager)
         {
             CurrentAPI = API;
-            MakeInstanceAPI(API);
         }
 
         private void MakeInstanceAPI(SelectAPI API)
