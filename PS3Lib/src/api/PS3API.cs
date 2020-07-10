@@ -245,12 +245,6 @@ namespace PS3Lib
                 return Enum.GetName(typeof(SelectAPI), SelectAPI.ManagerAPI).Replace("API", " API");
         }
 
-        /// <summary>This will find the dll ps3tmapi_net.dll for TMAPI.</summary>
-        public Assembly PS3TMAPI_NET()
-        {
-            return APISingleton.TM_API.PS3TMAPI_NET();
-        }
-
         /// <summary>Use the extension class with your selected API.</summary>
         public Extension Extension
         {
