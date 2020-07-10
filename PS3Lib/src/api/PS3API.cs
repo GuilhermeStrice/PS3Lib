@@ -259,5 +259,29 @@ namespace PS3Lib
                 return new Extension(CurrentAPI); 
             }
         }
+
+        public CCAPI CCAPI
+        {
+            get
+            {
+                return APISingleton.CC_API;
+            }
+        }
+
+        public TMAPI TMAPI
+        {
+            get
+            {
+                return APISingleton.TM_API;
+            }
+        }
+
+        public MAPI MAPI
+        {
+            get
+            {
+                return APISingleton.M_API;
+            }
+        }
     }
 }
