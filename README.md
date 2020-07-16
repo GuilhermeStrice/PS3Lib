@@ -5,7 +5,7 @@ Connect with PS3's, read/write memory and more...
 
 # Last changes:
 - Removed System.Windows.Forms as dependecy
-- Natively supports MAPI through CCAPI (still needs fake "CCAPI.dll" but now it must be called "MAPI.dll")
+- Native MAPI support
 - Code refractoring
 
 # Functions list :
