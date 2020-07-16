@@ -73,14 +73,14 @@ namespace PS3Lib
             }
 
             /// <summary>Get the target status and return the string value.</summary>
-            public string GetStatus()
+            public ConnectStatus GetStatus()
             {
                 if (AssemblyLoaded)
-                    return "NotConnected";
+                    return ConnectStatus.NotConnected;
                 Parameters.connectStatus = new ConnectStatus();
                 PS3TMAPI.GetConnectStatus(Target, out Parameters.connectStatus, out Parameters.usage);
                 Parameters.Status = Parameters.connectStatus.ToString();
-                return Parameters.Status;
+                return Parameters.connectStatus;
             }
 
             /// <summary>Get the ProcessID by the current process.</summary>

@@ -37,12 +37,18 @@ namespace PS3Lib
 
     public class PS3API
     {
-        public static string TargetName { get; private set; }
-        public static string TargetIp { get; private set; }
+        public static string TargetName { get; internal set; }
+        public static string TargetIp { get; internal set; }
 
         public static OnError OnError;
 
         internal uint mapi_processId_internal = 0;
+
+        public bool IsAttached
+        {
+            get;
+            internal set;
+        }
 
         public uint MAPIProcessID
         {
@@ -71,6 +77,29 @@ namespace PS3Lib
         public PS3API(SelectAPI API = SelectAPI.TargetManager)
         {
             CurrentAPI = API;
+        }
+
+        internal bool isConnected()
+        {
+            if (CurrentAPI == SelectAPI.ControlConsole)
+            {
+                // int?
+                int status = CCAPI.GetConnectionStatus();
+                return true;
+            }
+            else if (CurrentAPI == SelectAPI.ManagerAPI)
+            {
+                return MAPI.IsConnected;
+            }
+            else
+            {
+                return TMAPI.SCE.GetStatus() == ConnectStatus.Connected;
+            }
+        }
+
+        public bool IsConnected
+        {
+            get => isConnected();
         }
 
         private void MakeInstanceAPI(SelectAPI API)
@@ -167,11 +196,11 @@ namespace PS3Lib
         public bool AttachProcess()
         {
             if (CurrentAPI == SelectAPI.TargetManager)
-                return APISingleton.TM_API.AttachProcess();
+                return IsAttached = APISingleton.TM_API.AttachProcess();
             else if (CurrentAPI == SelectAPI.ControlConsole)
-                return APISingleton.CC_API.SUCCESS(APISingleton.CC_API.AttachProcess());
+                return IsAttached = APISingleton.CC_API.SUCCESS(APISingleton.CC_API.AttachProcess());
             else
-                return APISingleton.M_API.AttachProcess(MAPIProcessID);
+                return IsAttached = APISingleton.M_API.AttachProcess(MAPIProcessID);
         }
 
         public string GetConsoleName()
