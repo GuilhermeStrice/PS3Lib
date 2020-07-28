@@ -42,24 +42,10 @@ namespace PS3Lib
 
         public static OnError OnError;
 
-        internal uint mapi_processId_internal = 0;
-
         public bool IsAttached
         {
             get;
             internal set;
-        }
-
-        public uint MAPIProcessID
-        {
-            get
-            {
-                return mapi_processId_internal;
-            }
-            set
-            {
-                mapi_processId_internal = value;
-            }
         }
 
         internal SelectAPI currentAPI_internal;
@@ -106,18 +92,15 @@ namespace PS3Lib
         {
             if (API == SelectAPI.TargetManager)
             {
-                if (APISingleton.TM_API == null)
-                    APISingleton.TM_API = new TMAPI();
+                APISingleton.TM_API = new TMAPI();
             }
             else if (API == SelectAPI.ControlConsole)
             {
-                if (APISingleton.CC_API == null)
-                    APISingleton.CC_API = new CCAPI();
+                APISingleton.CC_API = new CCAPI();
             }
             else
             {
-                if (APISingleton.M_API == null)
-                    APISingleton.M_API = new MAPI();
+                APISingleton.M_API = new MAPI();
             }
         }
 
@@ -130,9 +113,11 @@ namespace PS3Lib
                 OnError?.Invoke(ErrorCodes.TMAPI_NOT_SELECTED);
         }
 
-        public List<CCAPI.ConsoleInfo> GetConsoleList()
+        public List<CCAPI.ConsoleInfo> GetCCAPIConsoleList()
         {
-            return APISingleton.CC_API.GetConsoleList();
+            if (CurrentAPI == SelectAPI.ControlConsole)
+                return APISingleton.CC_API.GetConsoleList();
+            return null;
         }
 
         /// <summary>Connect your console with selected API.</summary>
@@ -145,7 +130,7 @@ namespace PS3Lib
                 return APISingleton.TM_API.ConnectTarget(target);
             else if (CurrentAPI == SelectAPI.ControlConsole)
             {
-                var consoleList = GetConsoleList();
+                var consoleList = GetCCAPIConsoleList();
                 if (ConnectTarget(consoleList[target].Ip))
                 {
                     TargetName = consoleList[target].Name;
@@ -200,7 +185,7 @@ namespace PS3Lib
             else if (CurrentAPI == SelectAPI.ControlConsole)
                 return IsAttached = APISingleton.CC_API.SUCCESS(APISingleton.CC_API.AttachProcess());
             else
-                return IsAttached = APISingleton.M_API.AttachProcess(MAPIProcessID);
+                return IsAttached = APISingleton.M_API.AttachProcess();
         }
 
         public string GetConsoleName()

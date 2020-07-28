@@ -74,13 +74,12 @@ namespace PS3Lib
 
 
 
-        /// <summary>Attach to process by pid.</summary>
-        /// <param name="pid">Process PID</param>
-        public bool AttachProcess(uint pid)
+        /// <summary>Attach to process</summary>
+        public bool AttachProcess()
         {
             try
             {
-                Process.Process_Pid = pid;
+                Process.Process_Pid = Process.GetPidProcesses()[0]; // check if its 0 or 1
                 return true;
             }
             catch (Exception ex)
