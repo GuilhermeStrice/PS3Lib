@@ -1,30 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "/home/strice/Desktop/PS3Lib/PS3Lib.csproj": {}
+    "/home/strice/Desktop/PS3Lib/PS3Lib/PS3Lib.csproj": {}
   },
   "projects": {
-    "/home/strice/Desktop/PS3Lib/PS3Lib.csproj": {
+    "/home/strice/Desktop/PS3Lib/PS3Lib/PS3Lib.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/strice/Desktop/PS3Lib/PS3Lib.csproj",
+        "projectUniqueName": "/home/strice/Desktop/PS3Lib/PS3Lib/PS3Lib.csproj",
         "projectName": "PS3Lib",
-        "projectPath": "/home/strice/Desktop/PS3Lib/PS3Lib.csproj",
+        "projectPath": "/home/strice/Desktop/PS3Lib/PS3Lib/PS3Lib.csproj",
         "packagesPath": "/home/strice/.nuget/packages/",
-        "outputPath": "/home/strice/Desktop/PS3Lib/obj/",
+        "outputPath": "/home/strice/Desktop/PS3Lib/PS3Lib/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/strice/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "netstandard2.0"
+          "net9.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netstandard2.0": {
-            "targetAlias": "netstandard2.0",
+          "net9.0": {
+            "targetAlias": "net9.0",
             "projectReferences": {}
           }
         },
@@ -41,20 +41,8 @@
         "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
-        "netstandard2.0": {
-          "targetAlias": "netstandard2.0",
-          "dependencies": {
-            "Microsoft.Win32.Registry": {
-              "target": "Package",
-              "version": "[4.7.0, )"
-            },
-            "NETStandard.Library": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[2.0.3, )",
-              "autoReferenced": true
-            }
-          },
+        "net9.0": {
+          "targetAlias": "net9.0",
           "imports": [
             "net461",
             "net462",
@@ -66,7 +54,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.300/RuntimeIdentifierGraph.json"
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

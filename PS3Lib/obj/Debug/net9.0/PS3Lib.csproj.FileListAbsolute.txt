@@ -1,0 +1,12 @@
+/home/strice/Desktop/PS3Lib/PS3Lib/bin/Debug/net9.0/PS3Lib.deps.json
+/home/strice/Desktop/PS3Lib/PS3Lib/bin/Debug/net9.0/PS3Lib.dll
+/home/strice/Desktop/PS3Lib/PS3Lib/bin/Debug/net9.0/PS3Lib.pdb
+/home/strice/Desktop/PS3Lib/PS3Lib/obj/Debug/net9.0/PS3Lib.GeneratedMSBuildEditorConfig.editorconfig
+/home/strice/Desktop/PS3Lib/PS3Lib/obj/Debug/net9.0/PS3Lib.AssemblyInfoInputs.cache
+/home/strice/Desktop/PS3Lib/PS3Lib/obj/Debug/net9.0/PS3Lib.AssemblyInfo.cs
+/home/strice/Desktop/PS3Lib/PS3Lib/obj/Debug/net9.0/PS3Lib.csproj.CoreCompileInputs.cache
+/home/strice/Desktop/PS3Lib/PS3Lib/obj/Debug/net9.0/PS3Lib.sourcelink.json
+/home/strice/Desktop/PS3Lib/PS3Lib/obj/Debug/net9.0/PS3Lib.dll
+/home/strice/Desktop/PS3Lib/PS3Lib/obj/Debug/net9.0/refint/PS3Lib.dll
+/home/strice/Desktop/PS3Lib/PS3Lib/obj/Debug/net9.0/PS3Lib.pdb
+/home/strice/Desktop/PS3Lib/PS3Lib/obj/Debug/net9.0/ref/PS3Lib.dll

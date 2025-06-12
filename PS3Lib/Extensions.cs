@@ -20,107 +20,105 @@
 //                                                   //
 // ************************************************* //
 
-using System;
-using System.Linq;
 using System.Text;
 
 namespace PS3_MAPI
 {
-    public class Extension
+    public static class Extension
     {
         /// <summary>Read a signed byte.</summary>
-        public sbyte ReadSByte(uint offset)
+        public static sbyte ReadSByte(this MAPI api, uint offset)
         {
             byte[] buffer = new byte[1];
-            GetMem(offset, buffer);
+            api.GetMem(offset, buffer);
             return (sbyte)buffer[0];
         }
 
         /// <summary>Read a byte a check if his value. This return a bool according the byte detected.</summary>
-        public bool ReadBool(uint offset)
+        public static bool ReadBool(this MAPI api, uint offset)
         {
             byte[] buffer = new byte[1];
-            GetMem(offset, buffer);
+            api.GetMem(offset, buffer);
             return buffer[0] != 0;
         }
 
         /// <summary>Read and return an integer 16 bits.</summary>
-        public short ReadInt16(uint offset)
+        public static short ReadInt16(this MAPI api, uint offset)
         {
-            byte[] buffer = GetBytes(offset, 2);
+            byte[] buffer = api.GetBytes(offset, 2);
             Array.Reverse(buffer, 0, 2);
             return BitConverter.ToInt16(buffer, 0);
         }
 
         /// <summary>Read and return an integer 32 bits.</summary>
-        public int ReadInt32(uint offset)
+        public static int ReadInt32(this MAPI api, uint offset)
         {
-            byte[] buffer = GetBytes(offset, 4);
+            byte[] buffer = api.GetBytes(offset, 4);
             Array.Reverse(buffer, 0, 4);
             return BitConverter.ToInt32(buffer, 0);
         }
 
         /// <summary>Read and return an integer 64 bits.</summary>
-        public long ReadInt64(uint offset)
+        public static long ReadInt64(this MAPI api, uint offset)
         {
-            byte[] buffer = GetBytes(offset, 8);
+            byte[] buffer = api.GetBytes(offset, 8);
             Array.Reverse(buffer, 0, 8);
             return BitConverter.ToInt64(buffer, 0);
         }
 
         /// <summary>Read and return a byte.</summary>
-        public byte ReadByte(uint offset)
+        public static byte ReadByte(this MAPI api, uint offset)
         {
-            byte[] buffer = GetBytes(offset, 1);
+            byte[] buffer = api.GetBytes(offset, 1);
             return buffer[0];
         }
 
         /// <summary>Read a string with a length to the first byte equal to an value null (0x00).</summary>
-        public byte[] ReadBytes(uint offset, int length)
+        public static byte[] ReadBytes(this MAPI api, uint offset, int length)
         {
-            byte[] buffer = GetBytes(offset, (uint)length);
+            byte[] buffer = api.GetBytes(offset, (uint)length);
             return buffer;
         }
 
         /// <summary>Read and return an unsigned integer 16 bits.</summary>
-        public ushort ReadUInt16(uint offset)
+        public static ushort ReadUInt16(this MAPI api, uint offset)
         {
-            byte[] buffer = GetBytes(offset, 2);
+            byte[] buffer = api.GetBytes(offset, 2);
             Array.Reverse(buffer, 0, 2);
             return BitConverter.ToUInt16(buffer, 0);
         }
 
         /// <summary>Read and return an unsigned integer 32 bits.</summary>
-        public uint ReadUInt32(uint offset)
+        public static uint ReadUInt32(this MAPI api, uint offset)
         {
-            byte[] buffer = GetBytes(offset, 4);
+            byte[] buffer = api.GetBytes(offset, 4);
             Array.Reverse(buffer, 0, 4);
             return BitConverter.ToUInt32(buffer, 0);
         }
 
         /// <summary>Read and return an unsigned integer 64 bits.</summary>
-        public ulong ReadUInt64(uint offset)
+        public static ulong ReadUInt64(this MAPI api, uint offset)
         {
-            byte[] buffer = GetBytes(offset, 8);
+            byte[] buffer = api.GetBytes(offset, 8);
             Array.Reverse(buffer, 0, 8);
             return BitConverter.ToUInt64(buffer, 0);
         }
 
         /// <summary>Read and return a Float.</summary>
-        public float ReadFloat(uint offset)
+        public static float ReadFloat(this MAPI api, uint offset)
         {
-            byte[] buffer = GetBytes(offset, 4);
+            byte[] buffer = api.GetBytes(offset, 4);
             Array.Reverse(buffer, 0, 4);
             return BitConverter.ToSingle(buffer, 0);
         }
 
         /// <summary>Read and return an array of Floats.</summary>
-        public float[] ReadFloats(uint offset, int arrayLength = 3)
+        public static float[] ReadFloats(this MAPI api, uint offset, int arrayLength = 3)
         {
             float[] vec = new float[arrayLength];
             for (int i = 0; i < arrayLength; i++)
             {
-                byte[] buffer = GetBytes(offset + ((uint)i*4), 4);
+                byte[] buffer = api.GetBytes(offset + ((uint)i*4), 4);
                 Array.Reverse(buffer, 0, 4);
                 vec[i] = BitConverter.ToSingle(buffer, 0);
             }
@@ -128,15 +126,15 @@ namespace PS3_MAPI
         }
 
         /// <summary>Read and return a Double.</summary>
-        public double ReadDouble(uint offset)
+        public static double ReadDouble(this MAPI api, uint offset)
         {
-            byte[] buffer = GetBytes(offset, 8);
+            byte[] buffer = api.GetBytes(offset, 8);
             Array.Reverse(buffer, 0, 8);
             return BitConverter.ToDouble(buffer, 0);
         }
 
         /// <summary>Read a string very fast by buffer and stop only when a byte null is detected (0x00).</summary>
-        public string ReadString(uint offset)
+        public static string ReadString(this MAPI api, uint offset)
         {
             int blocksize = 40;
             int scalesize = 0;
@@ -144,7 +142,7 @@ namespace PS3_MAPI
 
             while (!str.Contains('\0'))
             {
-                byte[] buffer = ReadBytes(offset + (uint)scalesize, blocksize);
+                byte[] buffer = api.ReadBytes(offset + (uint)scalesize, blocksize);
                 str += Encoding.UTF8.GetString(buffer);
                 scalesize += blocksize;
             }
@@ -153,142 +151,142 @@ namespace PS3_MAPI
         }
 
         /// <summary>Write a signed byte.</summary>
-        public void WriteSByte(uint offset, sbyte input)
+        public static void WriteSByte(this MAPI api, uint offset, sbyte input)
         {
             byte[] buff = new byte[1];
             buff[0] = (byte)input;
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write a boolean.</summary>
-        public void WriteBool(uint offset, bool input)
+        public static void WriteBool(this MAPI api, uint offset, bool input)
         {
             byte[] buff = new byte[1];
             buff[0] = input ? (byte)1 : (byte)0;
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write an interger 16 bits.</summary>
-        public void WriteInt16(uint offset, short input)
+        public static void WriteInt16(this MAPI api, uint offset, short input)
         {
             byte[] buff = new byte[2];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 2);
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write an integer 32 bits.</summary>
-        public void WriteInt32(uint offset, int input)
+        public static void WriteInt32(this MAPI api, uint offset, int input)
         {
             byte[] buff = new byte[4];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 4);
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write an integer 64 bits.</summary>
-        public void WriteInt64(uint offset, long input)
+        public static void WriteInt64(this MAPI api, uint offset, long input)
         {
             byte[] buff = new byte[8];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 8);
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write a byte.</summary>
-        public void WriteByte(uint offset, byte input)
+        public static void WriteByte(this MAPI api, uint offset, byte input)
         {
             byte[] buff = new byte[1];
             buff[0] = input;
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write a byte array.</summary>
-        public void WriteBytes(uint offset, byte[] input)
+        public static void WriteBytes(this MAPI api, uint offset, byte[] input)
         {
             byte[] buff = input;
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write a string.</summary>
-        public void WriteString(uint offset, string input)
+        public static void WriteString(this MAPI api, uint offset, string input)
         {
             byte[] buff = Encoding.UTF8.GetBytes(input);
             Array.Resize(ref buff, buff.Length + 1);
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write an unsigned integer 16 bits.</summary>
-        public void WriteUInt16(uint offset, ushort input)
+        public static void WriteUInt16(this MAPI api, uint offset, ushort input)
         {
             byte[] buff = new byte[2];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 2);
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write an unsigned integer 32 bits.</summary>
-        public void WriteUInt32(uint offset, uint input)
+        public static void WriteUInt32(this MAPI api, uint offset, uint input)
         {
             byte[] buff = new byte[4];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 4);
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write an unsigned integer 64 bits.</summary>
-        public void WriteUInt64(uint offset, ulong input)
+        public static void WriteUInt64(this MAPI api, uint offset, ulong input)
         {
             byte[] buff = new byte[8];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 8);
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write a Float.</summary>
-        public void WriteFloat(uint offset, float input)
+        public static void WriteFloat(this MAPI api, uint offset, float input)
         {
             byte[] buff = new byte[4];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 4);
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
         /// <summary>Write an array of Floats.</summary>
-        public void WriteFloats(uint offset, float[] input)
+        public static void WriteFloats(this MAPI api, uint offset, float[] input)
         {
             byte[] buff = new byte[4];
             for (int i = 0; i < input.Length; i++)
             {
                 BitConverter.GetBytes(input[i]).CopyTo(buff, 0);
                 Array.Reverse(buff, 0, 4);
-                SetMem(offset+((uint)i*4), buff);
+                api.SetMem(offset+((uint)i*4), buff);
             }
         }
 
         /// <summary>Write a double.</summary>
-        public void WriteDouble(uint offset, double input)
+        public static void WriteDouble(this MAPI api, uint offset, double input)
         {
             byte[] buff = new byte[8];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 8);
-            SetMem(offset, buff);
+            api.SetMem(offset, buff);
         }
 
-        private void SetMem(uint Address, byte[] buffer)
+        private static void SetMem(this MAPI api, uint Address, byte[] buffer)
         {
-            APISingleton.M_API.Process.Memory.Set(APISingleton.M_API.Process.Process_Pid, Address, buffer);
+            api.Process.Memory.Set(api.Process.Process_Pid, Address, buffer);
         }
 
-        private void GetMem(uint offset, byte[] buffer)
+        private static void GetMem(this MAPI api, uint offset, byte[] buffer)
         {
-            APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
+            api.Process.Memory.Get(api.Process.Process_Pid, offset, buffer);
         }
 
-        private byte[] GetBytes(uint offset, uint length)
+        private static byte[] GetBytes(this MAPI api, uint offset, uint length)
         {
             byte[] buffer = new byte[length];
-            APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
+            api.Process.Memory.Get(api.Process.Process_Pid, offset, buffer);
             return buffer;
         }
     }
