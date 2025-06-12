@@ -24,21 +24,15 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace PS3Lib
+namespace PS3_MAPI
 {
     public class Extension
     {
-        private SelectAPI CurrentAPI;
-        public Extension(SelectAPI API)
-        {
-            CurrentAPI = API;
-        }
-
         /// <summary>Read a signed byte.</summary>
         public sbyte ReadSByte(uint offset)
         {
             byte[] buffer = new byte[1];
-            GetMem(offset, buffer, CurrentAPI);
+            GetMem(offset, buffer);
             return (sbyte)buffer[0];
         }
 
@@ -46,14 +40,14 @@ namespace PS3Lib
         public bool ReadBool(uint offset)
         {
             byte[] buffer = new byte[1];
-            GetMem(offset, buffer, CurrentAPI);
+            GetMem(offset, buffer);
             return buffer[0] != 0;
         }
 
         /// <summary>Read and return an integer 16 bits.</summary>
         public short ReadInt16(uint offset)
         {
-            byte[] buffer = GetBytes(offset, 2, CurrentAPI);
+            byte[] buffer = GetBytes(offset, 2);
             Array.Reverse(buffer, 0, 2);
             return BitConverter.ToInt16(buffer, 0);
         }
@@ -61,7 +55,7 @@ namespace PS3Lib
         /// <summary>Read and return an integer 32 bits.</summary>
         public int ReadInt32(uint offset)
         {
-            byte[] buffer = GetBytes(offset, 4, CurrentAPI);
+            byte[] buffer = GetBytes(offset, 4);
             Array.Reverse(buffer, 0, 4);
             return BitConverter.ToInt32(buffer, 0);
         }
@@ -69,7 +63,7 @@ namespace PS3Lib
         /// <summary>Read and return an integer 64 bits.</summary>
         public long ReadInt64(uint offset)
         {
-            byte[] buffer = GetBytes(offset, 8, CurrentAPI);
+            byte[] buffer = GetBytes(offset, 8);
             Array.Reverse(buffer, 0, 8);
             return BitConverter.ToInt64(buffer, 0);
         }
@@ -77,21 +71,21 @@ namespace PS3Lib
         /// <summary>Read and return a byte.</summary>
         public byte ReadByte(uint offset)
         {
-            byte[] buffer = GetBytes(offset, 1, CurrentAPI);
+            byte[] buffer = GetBytes(offset, 1);
             return buffer[0];
         }
 
         /// <summary>Read a string with a length to the first byte equal to an value null (0x00).</summary>
         public byte[] ReadBytes(uint offset, int length)
         {
-            byte[] buffer = GetBytes(offset, (uint)length, CurrentAPI);
+            byte[] buffer = GetBytes(offset, (uint)length);
             return buffer;
         }
 
         /// <summary>Read and return an unsigned integer 16 bits.</summary>
         public ushort ReadUInt16(uint offset)
         {
-            byte[] buffer = GetBytes(offset, 2, CurrentAPI);
+            byte[] buffer = GetBytes(offset, 2);
             Array.Reverse(buffer, 0, 2);
             return BitConverter.ToUInt16(buffer, 0);
         }
@@ -99,7 +93,7 @@ namespace PS3Lib
         /// <summary>Read and return an unsigned integer 32 bits.</summary>
         public uint ReadUInt32(uint offset)
         {
-            byte[] buffer = GetBytes(offset, 4, CurrentAPI);
+            byte[] buffer = GetBytes(offset, 4);
             Array.Reverse(buffer, 0, 4);
             return BitConverter.ToUInt32(buffer, 0);
         }
@@ -107,7 +101,7 @@ namespace PS3Lib
         /// <summary>Read and return an unsigned integer 64 bits.</summary>
         public ulong ReadUInt64(uint offset)
         {
-            byte[] buffer = GetBytes(offset, 8, CurrentAPI);
+            byte[] buffer = GetBytes(offset, 8);
             Array.Reverse(buffer, 0, 8);
             return BitConverter.ToUInt64(buffer, 0);
         }
@@ -115,7 +109,7 @@ namespace PS3Lib
         /// <summary>Read and return a Float.</summary>
         public float ReadFloat(uint offset)
         {
-            byte[] buffer = GetBytes(offset, 4, CurrentAPI);
+            byte[] buffer = GetBytes(offset, 4);
             Array.Reverse(buffer, 0, 4);
             return BitConverter.ToSingle(buffer, 0);
         }
@@ -126,7 +120,7 @@ namespace PS3Lib
             float[] vec = new float[arrayLength];
             for (int i = 0; i < arrayLength; i++)
             {
-                byte[] buffer = GetBytes(offset + ((uint)i*4), 4, CurrentAPI);
+                byte[] buffer = GetBytes(offset + ((uint)i*4), 4);
                 Array.Reverse(buffer, 0, 4);
                 vec[i] = BitConverter.ToSingle(buffer, 0);
             }
@@ -136,7 +130,7 @@ namespace PS3Lib
         /// <summary>Read and return a Double.</summary>
         public double ReadDouble(uint offset)
         {
-            byte[] buffer = GetBytes(offset, 8, CurrentAPI);
+            byte[] buffer = GetBytes(offset, 8);
             Array.Reverse(buffer, 0, 8);
             return BitConverter.ToDouble(buffer, 0);
         }
@@ -163,7 +157,7 @@ namespace PS3Lib
         {
             byte[] buff = new byte[1];
             buff[0] = (byte)input;
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write a boolean.</summary>
@@ -171,7 +165,7 @@ namespace PS3Lib
         {
             byte[] buff = new byte[1];
             buff[0] = input ? (byte)1 : (byte)0;
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write an interger 16 bits.</summary>
@@ -180,7 +174,7 @@ namespace PS3Lib
             byte[] buff = new byte[2];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 2);
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write an integer 32 bits.</summary>
@@ -189,7 +183,7 @@ namespace PS3Lib
             byte[] buff = new byte[4];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 4);
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write an integer 64 bits.</summary>
@@ -198,7 +192,7 @@ namespace PS3Lib
             byte[] buff = new byte[8];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 8);
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write a byte.</summary>
@@ -206,14 +200,14 @@ namespace PS3Lib
         {
             byte[] buff = new byte[1];
             buff[0] = input;
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write a byte array.</summary>
         public void WriteBytes(uint offset, byte[] input)
         {
             byte[] buff = input;
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write a string.</summary>
@@ -221,7 +215,7 @@ namespace PS3Lib
         {
             byte[] buff = Encoding.UTF8.GetBytes(input);
             Array.Resize(ref buff, buff.Length + 1);
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write an unsigned integer 16 bits.</summary>
@@ -230,7 +224,7 @@ namespace PS3Lib
             byte[] buff = new byte[2];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 2);
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write an unsigned integer 32 bits.</summary>
@@ -239,7 +233,7 @@ namespace PS3Lib
             byte[] buff = new byte[4];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 4);
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write an unsigned integer 64 bits.</summary>
@@ -248,7 +242,7 @@ namespace PS3Lib
             byte[] buff = new byte[8];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 8);
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write a Float.</summary>
@@ -257,7 +251,7 @@ namespace PS3Lib
             byte[] buff = new byte[4];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 4);
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
         /// <summary>Write an array of Floats.</summary>
@@ -268,7 +262,7 @@ namespace PS3Lib
             {
                 BitConverter.GetBytes(input[i]).CopyTo(buff, 0);
                 Array.Reverse(buff, 0, 4);
-                SetMem(offset+((uint)i*4), buff, CurrentAPI);
+                SetMem(offset+((uint)i*4), buff);
             }
         }
 
@@ -278,38 +272,23 @@ namespace PS3Lib
             byte[] buff = new byte[8];
             BitConverter.GetBytes(input).CopyTo(buff, 0);
             Array.Reverse(buff, 0, 8);
-            SetMem(offset, buff, CurrentAPI);
+            SetMem(offset, buff);
         }
 
-        private void SetMem(uint Address, byte[] buffer, SelectAPI API)
+        private void SetMem(uint Address, byte[] buffer)
         {
-            if (API == SelectAPI.ControlConsole)
-                APISingleton.CC_API.SetMemory(Address, buffer);
-            else if (API == SelectAPI.TargetManager)
-                APISingleton.TM_API.SetMemory(Address, buffer);
-            else if (API == SelectAPI.ManagerAPI)
-                APISingleton.M_API.Process.Memory.Set(APISingleton.M_API.Process.Process_Pid, Address, buffer);
+            APISingleton.M_API.Process.Memory.Set(APISingleton.M_API.Process.Process_Pid, Address, buffer);
         }
 
-        private void GetMem(uint offset, byte[] buffer, SelectAPI API)
+        private void GetMem(uint offset, byte[] buffer)
         {
-            if (API == SelectAPI.ControlConsole)
-                APISingleton.CC_API.GetMemory(offset, buffer);
-            else if (API == SelectAPI.TargetManager)
-                APISingleton.TM_API.GetMemory(offset, buffer);
-            else if (API == SelectAPI.ManagerAPI)
-                APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
+            APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
         }
 
-        private byte[] GetBytes(uint offset, uint length, SelectAPI API)
+        private byte[] GetBytes(uint offset, uint length)
         {
             byte[] buffer = new byte[length];
-            if (API == SelectAPI.ControlConsole)
-                buffer = APISingleton.CC_API.GetBytes(offset, length);
-            else if (API == SelectAPI.TargetManager)
-                buffer = APISingleton.TM_API.GetBytes(offset, length);
-            else if (API == SelectAPI.ManagerAPI)
-                APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
+            APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
             return buffer;
         }
     }

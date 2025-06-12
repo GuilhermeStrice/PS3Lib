@@ -24,7 +24,7 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace PS3Lib
+namespace PS3_MAPI
 {
     public enum EndianType
     {

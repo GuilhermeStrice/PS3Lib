@@ -11,7 +11,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace PS3Lib
+namespace PS3_MAPI
 {
     public class MAPI
     {

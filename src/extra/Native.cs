@@ -1,4 +1,8 @@
-﻿namespace PS3Lib
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Text;
+
+namespace PS3_MAPI
 {
     public static class Native
     {

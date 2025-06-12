@@ -4,3 +4,8 @@
 /home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.AssemblyInfo.cs
 /home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.csproj.CoreCompileInputs.cache
 /home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.sourcelink.json
+/home/strice/Desktop/PS3Lib/bin/Debug/netstandard2.0/PS3Lib.deps.json
+/home/strice/Desktop/PS3Lib/bin/Debug/netstandard2.0/PS3Lib.dll
+/home/strice/Desktop/PS3Lib/bin/Debug/netstandard2.0/PS3Lib.pdb
+/home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.dll
+/home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.pdb
