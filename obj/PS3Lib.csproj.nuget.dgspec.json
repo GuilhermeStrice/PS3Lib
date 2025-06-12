@@ -1,31 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Utilizador\\Desktop\\PS3Lib\\PS3Lib\\PS3Lib.csproj": {}
+    "/home/strice/Desktop/PS3Lib/PS3Lib.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Utilizador\\Desktop\\PS3Lib\\PS3Lib\\PS3Lib.csproj": {
+    "/home/strice/Desktop/PS3Lib/PS3Lib.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Utilizador\\Desktop\\PS3Lib\\PS3Lib\\PS3Lib.csproj",
+        "projectUniqueName": "/home/strice/Desktop/PS3Lib/PS3Lib.csproj",
         "projectName": "PS3Lib",
-        "projectPath": "C:\\Users\\Utilizador\\Desktop\\PS3Lib\\PS3Lib\\PS3Lib.csproj",
-        "packagesPath": "C:\\Users\\Utilizador\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Utilizador\\Desktop\\PS3Lib\\PS3Lib\\obj\\",
+        "projectPath": "/home/strice/Desktop/PS3Lib/PS3Lib.csproj",
+        "packagesPath": "/home/strice/.nuget/packages/",
+        "outputPath": "/home/strice/Desktop/PS3Lib/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Utilizador\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/strice/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netstandard2.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netstandard2.0": {
+            "targetAlias": "netstandard2.0",
             "projectReferences": {}
           }
         },
@@ -33,10 +32,17 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "netstandard2.0": {
+          "targetAlias": "netstandard2.0",
           "dependencies": {
             "Microsoft.Win32.Registry": {
               "target": "Package",
@@ -55,11 +61,12 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.300/RuntimeIdentifierGraph.json"
         }
       }
     }

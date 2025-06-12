@@ -1,28 +1,4 @@
-﻿// ************************************************* //
-//    --- Copyright (c) 2015 iMCS Productions ---    //
-// ************************************************* //
-//              PS3Lib v4 By FM|T iMCSx              //
-//                                                   //
-// Features v4.5 :                                   //
-// - Support CCAPI v2.60+ C# by iMCSx.               //
-// - Read/Write memory as 'double'.                  //
-// - Read/Write memory as 'float' array.             //
-// - Constructor overload for ArrayBuilder.          //
-// - Some functions fixes.                           //
-//                                                   //
-// Credits : Enstone, Buc-ShoTz                      //
-//                                                   //
-// Follow me :                                       //
-//                                                   //
-// FrenchModdingTeam.com                             //
-// Twitter.com/iMCSx                                 //
-// Facebook.com/iMCSx                                //
-//                                                   //
-// ************************************************* //
-
-using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 
 namespace PS3Lib
 {
@@ -31,7 +7,6 @@ namespace PS3Lib
     public static class APISingleton
     {
         public static CCAPI CC_API;
-        public static TMAPI TM_API;
         public static MAPI M_API;
     }
 
@@ -77,10 +52,8 @@ namespace PS3Lib
             {
                 return MAPI.IsConnected;
             }
-            else
-            {
-                return TMAPI.SCE.GetStatus() == ConnectStatus.Connected;
-            }
+
+            return false;
         }
 
         public bool IsConnected
@@ -90,11 +63,7 @@ namespace PS3Lib
 
         private void MakeInstanceAPI(SelectAPI API)
         {
-            if (API == SelectAPI.TargetManager)
-            {
-                APISingleton.TM_API = new TMAPI();
-            }
-            else if (API == SelectAPI.ControlConsole)
+            if (API == SelectAPI.ControlConsole)
             {
                 APISingleton.CC_API = new CCAPI();
             }
@@ -107,10 +76,7 @@ namespace PS3Lib
        /// <summary>init again the connection if you use a Thread or a Timer.</summary>
         public void InitTarget()
         {
-            if (CurrentAPI == SelectAPI.TargetManager)
-                APISingleton.TM_API.InitComms();
-            else
-                OnError?.Invoke(ErrorCodes.TMAPI_NOT_SELECTED);
+            OnError?.Invoke(ErrorCodes.TMAPI_NOT_SELECTED);
         }
 
         public List<CCAPI.ConsoleInfo> GetCCAPIConsoleList()
@@ -126,9 +92,7 @@ namespace PS3Lib
             // We'll check again if the instance has been done, else you'll got an exception error.
             MakeInstanceAPI(CurrentAPI);
 
-            if (CurrentAPI == SelectAPI.TargetManager)
-                return APISingleton.TM_API.ConnectTarget(target);
-            else if (CurrentAPI == SelectAPI.ControlConsole)
+            if (CurrentAPI == SelectAPI.ControlConsole)
             {
                 var consoleList = GetCCAPIConsoleList();
                 if (ConnectTarget(consoleList[target].Ip))
@@ -169,9 +133,7 @@ namespace PS3Lib
         /// <summary>Disconnect Target with selected API.</summary>
         public void DisconnectTarget()
         {
-            if (CurrentAPI == SelectAPI.TargetManager)
-                APISingleton.TM_API.DisconnectTarget();
-            else if (CurrentAPI == SelectAPI.ControlConsole)
+            if (CurrentAPI == SelectAPI.ControlConsole)
                 APISingleton.CC_API.DisconnectTarget();
             else
                 APISingleton.M_API.DisconnectTarget();
@@ -180,9 +142,7 @@ namespace PS3Lib
         /// <summary>Attach the current process (current Game) with selected API.</summary>
         public bool AttachProcess()
         {
-            if (CurrentAPI == SelectAPI.TargetManager)
-                return IsAttached = APISingleton.TM_API.AttachProcess();
-            else if (CurrentAPI == SelectAPI.ControlConsole)
+            if (CurrentAPI == SelectAPI.ControlConsole)
                 return IsAttached = APISingleton.CC_API.SUCCESS(APISingleton.CC_API.AttachProcess());
             else
                 return IsAttached = APISingleton.M_API.AttachProcess();
@@ -190,9 +150,7 @@ namespace PS3Lib
 
         public string GetConsoleName()
         {
-            if (CurrentAPI == SelectAPI.TargetManager)
-                return APISingleton.TM_API.SCE.GetTargetName();
-            else if (CurrentAPI == SelectAPI.ControlConsole)
+            if (CurrentAPI == SelectAPI.ControlConsole)
             {
                 if (TargetName != string.Empty)
                     return TargetName;
@@ -216,9 +174,7 @@ namespace PS3Lib
         /// <summary>Set memory to offset with selected API.</summary>
         public void SetMemory(uint offset, byte[] buffer)
         {
-            if (CurrentAPI == SelectAPI.TargetManager)
-                APISingleton.TM_API.SetMemory(offset, buffer);
-            else if (CurrentAPI == SelectAPI.ControlConsole)
+            if (CurrentAPI == SelectAPI.ControlConsole)
                 APISingleton.CC_API.SetMemory(offset, buffer);
             else
                 APISingleton.M_API.Process.Memory.Set(APISingleton.M_API.Process.Process_Pid, offset, buffer);
@@ -227,9 +183,7 @@ namespace PS3Lib
         /// <summary>Get memory from offset using the Selected API.</summary>
         public void GetMemory(uint offset, byte[] buffer)
         {
-            if (CurrentAPI == SelectAPI.TargetManager)
-                APISingleton.TM_API.GetMemory(offset, buffer);
-            else if (CurrentAPI == SelectAPI.ControlConsole)
+            if (CurrentAPI == SelectAPI.ControlConsole)
                 APISingleton.CC_API.GetMemory(offset, buffer);
             else
                 APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);
@@ -239,9 +193,7 @@ namespace PS3Lib
         public byte[] GetBytes(uint offset, int length)
         {
             byte[] buffer = new byte[length];
-            if (CurrentAPI == SelectAPI.TargetManager)
-                APISingleton.TM_API.GetMemory(offset, buffer);
-            else if (CurrentAPI == SelectAPI.ControlConsole)
+            if (CurrentAPI == SelectAPI.ControlConsole)
                 APISingleton.CC_API.GetMemory(offset, buffer);
             else
                 APISingleton.M_API.Process.Memory.Get(APISingleton.M_API.Process.Process_Pid, offset, buffer);

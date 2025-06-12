@@ -1,0 +1,6 @@
+/home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.csproj.AssemblyReference.cache
+/home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.GeneratedMSBuildEditorConfig.editorconfig
+/home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.AssemblyInfoInputs.cache
+/home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.AssemblyInfo.cs
+/home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.csproj.CoreCompileInputs.cache
+/home/strice/Desktop/PS3Lib/obj/Debug/netstandard2.0/PS3Lib.sourcelink.json
