@@ -89,12 +89,6 @@ namespace PS3_MAPI
             return buffer;
         }
 
-        /// <summary>Return selected API into string format.</summary>
-        public string GetCurrentAPIName()
-        {
-            return Enum.GetName(typeof(SelectAPI), SelectAPI.ManagerAPI).Replace("API", " API");
-        }
-
         public MAPI MAPI
         {
             get

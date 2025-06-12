@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PS3Lib")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+93c43802199e567346932cebbce2776a2732efd8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+40ca945593f691da446b0453b602654fbaab8a52")]
 [assembly: System.Reflection.AssemblyProductAttribute("PS3Lib")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PS3Lib")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
